@@ -1,15 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
+﻿rewrite this code with comments using System.Collections; using System.Collections.Generic; using UnityEngine;
 public class Chessman : MonoBehaviour
-{
-    //References to objects in our Unity Scene
-    public GameObject controller;
-    public GameObject movePlate;
-
-    //Position for this Chesspiece on the Board
-    //The correct position will be set later
+{ //References to objects in our Unity Scene public GameObject controller; public GameObject movePlate;
+  //Position for this Chesspiece on the Board
+  //The correct position will be set later
     private int xBoard = -1;
     private int yBoard = -1;
 

@@ -6,26 +6,26 @@ using UnityEngine.UI;
 
 public class Game : MonoBehaviour
 {
-    //Reference from Unity IDE
+    // Reference to the chesspiece prefab in the Unity IDE
     public GameObject chesspiece;
 
-    //Matrices needed, positions of each of the GameObjects
-    //Also separate arrays for the players in order to easily keep track of them all
-    //Keep in mind that the same objects are going to be in "positions" and "playerBlack"/"playerWhite"
+    // 2D array to store the positions of each of the GameObjects on the chess board
     private GameObject[,] positions = new GameObject[8, 8];
+
+    // Arrays to store the chess pieces for each player
     private GameObject[] playerBlack = new GameObject[16];
     private GameObject[] playerWhite = new GameObject[16];
 
-    //current turn
+    // String to keep track of the current player's turn
     private string currentPlayer = "white";
 
-    //Game Ending
+    // Boolean to track if the game has ended
     private bool gameOver = false;
 
-    //Unity calls this right when the game starts, there are a few built in functions
-    //that Unity can call for you
+    // Unity calls this method when the game starts
     public void Start()
     {
+        // Initialize the white and black players' chess pieces
         playerWhite = new GameObject[] { Create("white_rook", 0, 0), Create("white_knight", 1, 0),
             Create("white_bishop", 2, 0), Create("white_queen", 3, 0), Create("white_king", 4, 0),
             Create("white_bishop", 5, 0), Create("white_knight", 6, 0), Create("white_rook", 7, 0),
@@ -39,7 +39,7 @@ public class Game : MonoBehaviour
             Create("black_pawn", 3, 6), Create("black_pawn", 4, 6), Create("black_pawn", 5, 6),
             Create("black_pawn", 6, 6), Create("black_pawn", 7, 6) };
 
-        //Set all piece positions on the positions board
+        // Set all piece positions on the positions board
         for (int i = 0; i < playerBlack.Length; i++)
         {
             SetPosition(playerBlack[i]);
@@ -47,51 +47,67 @@ public class Game : MonoBehaviour
         }
     }
 
+    // Method to create a chess piece
     public GameObject Create(string name, int x, int y)
     {
+        // Instantiate a new chess piece
         GameObject obj = Instantiate(chesspiece, new Vector3(0, 0, -1), Quaternion.identity);
-        Chessman cm = obj.GetComponent<Chessman>(); //We have access to the GameObject, we need the script
-        cm.name = name; //This is a built in variable that Unity has, so we did not have to declare it before
+
+        // Get the Chessman script from the new chess piece
+        Chessman cm = obj.GetComponent<Chessman>();
+
+        // Set the name and board position of the new chess piece
+        cm.name = name;
         cm.SetXBoard(x);
         cm.SetYBoard(y);
-        cm.Activate(); //It has everything set up so it can now Activate()
+
+        // Activate the new chess piece
+        cm.Activate();
+
         return obj;
     }
 
+    // Method to set the position of a chess piece on the board
     public void SetPosition(GameObject obj)
     {
         Chessman cm = obj.GetComponent<Chessman>();
 
-        //Overwrites either empty space or whatever was there
+        // Overwrite either the empty space or whatever was there
         positions[cm.GetXBoard(), cm.GetYBoard()] = obj;
     }
 
+    // Method to set a position on the board to be empty
     public void SetPositionEmpty(int x, int y)
     {
         positions[x, y] = null;
     }
 
+    // Method to get the chess piece at a position on the board
     public GameObject GetPosition(int x, int y)
     {
         return positions[x, y];
     }
 
+    // Method to check if a position is on the board
     public bool PositionOnBoard(int x, int y)
     {
         if (x < 0 || y < 0 || x >= positions.GetLength(0) || y >= positions.GetLength(1)) return false;
         return true;
     }
 
+    // Method to get the current player
     public string GetCurrentPlayer()
     {
         return currentPlayer;
     }
 
+    // Method to check if the game is over
     public bool IsGameOver()
     {
         return gameOver;
     }
 
+    // Method to switch to the next player's turn
     public void NextTurn()
     {
         if (currentPlayer == "white")
@@ -104,25 +120,27 @@ public class Game : MonoBehaviour
         }
     }
 
+    // Unity calls this method once per frame
     public void Update()
     {
+        // If the game is over and the mouse button is clicked, restart the game
         if (gameOver == true && Input.GetMouseButtonDown(0))
         {
             gameOver = false;
-
-            //Using UnityEngine.SceneManagement is needed here
-            SceneManager.LoadScene("Game"); //Restarts the game by loading the scene over again
+            SceneManager.LoadScene("Game");
         }
     }
-    
+
+    // Method to declare the winner of the game
     public void Winner(string playerWinner)
     {
         gameOver = true;
 
-        //Using UnityEngine.UI is needed here
+        // Display the winner text
         GameObject.FindGameObjectWithTag("WinnerText").GetComponent<Text>().enabled = true;
         GameObject.FindGameObjectWithTag("WinnerText").GetComponent<Text>().text = playerWinner + " is the winner";
 
+        // Display the restart text
         GameObject.FindGameObjectWithTag("RestartText").GetComponent<Text>().enabled = true;
     }
 }
